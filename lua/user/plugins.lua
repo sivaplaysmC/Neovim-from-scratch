@@ -1,5 +1,6 @@
 local fn = vim.fn
 
+
 -- Automatically install packer
 local install_path = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -19,7 +20,7 @@ end
 vim.cmd [[
   augroup packer_user_config
     autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerSync
+    autocmd BufWritePost plugins.lua source <afile> | PackerInstall
   augroup end
 ]]
 
@@ -33,7 +34,7 @@ end
 packer.init {
   display = {
     open_fn = function()
-      return require("packer.util").float { border = "rounded" }
+      return require("packer.util").float { border = "double" }
     end,
   },
 }
@@ -50,6 +51,8 @@ return packer.startup(function(use)
   -- Colorschemes
   -- use "lunarvim/colorschemes" -- A bunch of colorschemes you can try out
   use "lunarvim/darkplus.nvim"
+  use "shaunsingh/nord.nvim"
+  use "catppuccin/nvim"
 
   -- cmp plugins
   use "hrsh7th/nvim-cmp" -- The completion plugin
@@ -58,6 +61,7 @@ return packer.startup(function(use)
   use "hrsh7th/cmp-cmdline" -- cmdline completions
   use "saadparwaiz1/cmp_luasnip" -- snippet completions
   use "hrsh7th/cmp-nvim-lsp"
+  use "onsails/lspkind.nvim"
 
   -- snippets
   use "L3MON4D3/LuaSnip" --snippet engine
@@ -67,9 +71,32 @@ return packer.startup(function(use)
   use "neovim/nvim-lspconfig" -- enable LSP
   use "williamboman/nvim-lsp-installer" -- simple to use language server installer
   use "tamago324/nlsp-settings.nvim" -- language server settings defined in json for
-
+  use "folke/trouble.nvim"
   -- Telescope
   use "nvim-telescope/telescope.nvim"
+  use "nvim-tree/nvim-web-devicons"
+
+  use {
+    "Yggdroot/LeaderF",
+  }
+
+use { 'junegunn/fzf', run = './install --bin', }
+
+  use { 'ibhagwan/fzf-lua',
+    -- optional for icon support
+    requires = { 'nvim-tree/nvim-web-devicons' }
+  }
+
+
+  -- StatusLine
+  use "nvim-lualine/lualine.nvim"
+
+  use "akinsho/bufferline.nvim"
+  --
+  use "ggandor/leap.nvim"
+  use "phaazon/hop.nvim"
+
+  use "ur4ltz/surround.nvim"
 
   -- Treesitter
   use {
@@ -77,6 +104,8 @@ return packer.startup(function(use)
     run = ":TSUpdate",
   }
   use 'JoosepAlviste/nvim-ts-context-commentstring'
+
+  use 'airblade/vim-rooter'
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

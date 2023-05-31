@@ -3,47 +3,53 @@ if not cmp_status_ok then
   return
 end
 
-local snip_status_ok, luasnip = pcall(require, "luasnip")
-if not snip_status_ok then
-  return
-end
+local lspkind = require("lspkind")
+
+local codicons = {
+    Text = "",
+    Method = "",
+    Function = "",
+    Constructor = "",
+    Field = "",
+    Variable = "",
+    Class = "",
+    Interface = "",
+    Module = "",
+    Property = "",
+    Unit = "",
+    Value = "",
+    Enum = "",
+    Keyword = "",
+    Snippet = "",
+    Color = "",
+    File = "",
+    Reference = "",
+    Folder = "",
+    EnumMember = "",
+    Constant = "",
+    Struct = "",
+    Event = "",
+    Operator = "",
+    TypeParameter = "",
+  }
+
+
+
+local luasnip = require("luasnip")
+
+luasnip.config.set_config({
+  region_check_events = 'InsertEnter',
+  delete_check_events = 'InsertLeave'
+})
+
 
 require("luasnip/loaders/from_vscode").lazy_load()
+
 
 local check_backspace = function()
   local col = vim.fn.col "." - 1
   return col == 0 or vim.fn.getline("."):sub(col, col):match "%s"
 end
-
---   פּ ﯟ   some other good icons
-local kind_icons = {
-  Text = "",
-  Method = "m",
-  Function = "",
-  Constructor = "",
-  Field = "",
-  Variable = "",
-  Class = "",
-  Interface = "",
-  Module = "",
-  Property = "",
-  Unit = "",
-  Value = "",
-  Enum = "",
-  Keyword = "",
-  Snippet = "",
-  Color = "",
-  File = "",
-  Reference = "",
-  Folder = "",
-  EnumMember = "",
-  Constant = "",
-  Struct = "",
-  Event = "",
-  Operator = "",
-  TypeParameter = "",
-}
--- find more here: https://www.nerdfonts.com/cheat-sheet
 
 cmp.setup {
   snippet = {
@@ -94,21 +100,49 @@ cmp.setup {
       "s",
     }),
   },
+
   formatting = {
-    fields = { "kind", "abbr", "menu" },
     format = function(entry, vim_item)
       -- Kind icons
-      vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
-      -- vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-      vim_item.menu = ({
-        nvim_lsp = "[LSP]",
-        luasnip = "[Snippet]",
-        buffer = "[Buffer]",
-        path = "[Path]",
-      })[entry.source.name]
+      vim_item.kind = string.format(' %s  %s', codicons[vim_item.kind] , vim_item.kind) -- This concatonates the icons with the name of the item kind
+      -- Function function jkjjj()
+      function cool()
+        print("Hi There")
+      end
+      -- end
+      -- Source  
+      -- vim_item.menu = ({
+      --   buffer = "[BUF]",
+      --   nvim_lsp = "[LSP]",
+      --   luasnip = "[SNP]",
+      --   nvim_lua = "[LUA]",
+      --   latex_symbols = "[LTX]",
+      -- })[entry.source.name]
       return vim_item
-    end,
+    end
   },
+
+
+  -- formatting = {
+  --   max_width = 50,
+  --   ellipsis_char = '...',
+  --   format = lspkind.cmp_format{
+  --           mode = "symbol_text",
+  --           preset = "codicons"
+  --       },
+  --
+  --   menu = ({
+  --     buffer = "[BUF]",
+  --     nvim_lsp = "[LSP]",
+  --     luasnip = "[SNP]",
+  --     nvim_lua = "[LUA]",
+  --     latex_symbols = "[LTX]",
+  --   })
+  --   --[[ before = function(_, vim_item) ]]
+  --   --[[   vim_item.kind = cmp_kinds[vim_item.kind] or "" ]]
+  --   --[[   return vim_item ]]
+  --   --[[ end, ]]
+  -- },
   sources = {
     { name = "nvim_lsp" },
     { name = "luasnip" },
@@ -119,11 +153,32 @@ cmp.setup {
     behavior = cmp.ConfirmBehavior.Replace,
     select = false,
   },
-  documentation = {
-    border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+ window = {
+    documentation = {
+      border = {'╭', '─', '╮', '│', '╯', '─', '╰', '│'},
+    },
+    completion = {
+      border = {'┌', '─', '┐', '│', '┘', '─', '└', '│'},
+      winhighlight = 'Normal:CmpPmenu,FloatBorder:CmpPmenuBorder,CursorLine:PmenuSel,Search:None',
+    }
   },
   experimental = {
     ghost_text = false,
     native_menu = false,
   },
 }
+
+    -- `:` cmdline setup.
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    {
+      name = 'cmdline',
+      option = {
+        ignore_cmds = { 'Man', '!' }
+      }
+    }
+  })
+})
